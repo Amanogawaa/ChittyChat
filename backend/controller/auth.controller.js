@@ -8,74 +8,79 @@ export const login = async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid credentials" });
     }
 
     generateToken(user._id, res);
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ success: true, message: "Login successful" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: "Internal server error" });
+    console.error(error.message);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
 
 export const register = async (req, res) => {
   try {
-    const { fullname, username, gender, password, cofirmPassword } = req.body;
+    const { fullname, username, gender, password, confirmPassword } = req.body;
 
-    if (password !== cofirmPassword) {
-      return res.status(400).json({ message: "Password do not match" });
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Passwords do not match" });
     }
 
-    const user = await User.findOne({ username });
+    const existingUser = await User.findOne({ username });
 
-    if (user) {
-      return res.status(400).json({ message: "Username already taken" });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Username already taken" });
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashpassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-    const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+    const profilePic = `https://avatar.iran.liara.run/public/${
+      gender === "male" ? "boy" : "girl"
+    }?username=${username}`;
 
     const newUser = new User({
       fullname,
       username,
       gender,
-      image: gender === "male" ? boyProfilePic : girlProfilePic,
-      password: hashpassword,
+      image: profilePic,
+      password: hashedPassword,
     });
 
-    if (newUser) {
-      generateToken(newUser._id, res);
-      await newUser.save();
+    await newUser.save();
+    generateToken(newUser._id, res);
 
-      res.status(201).json({
-        id: newUser._id,
-        fullname: newUser.fullname,
-        gender: newUser.gender,
-        image: newUser.image,
-      });
-    }
+    res.status(201).json({
+      success: true,
+      id: newUser._id,
+      fullname: newUser.fullname,
+      gender: newUser.gender,
+      image: newUser.image,
+    });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: "Internal server error" });
+    console.error(error.message);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
 
 export const logout = (req, res) => {
   try {
-    res.cookie("token", "", {
-      maxAge: 0,
+    res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
-    res.status(200).json({ message: "Logout successful" });
+    res.status(200).json({ success: true, message: "Logout successful" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: "Internal server error" });
+    console.error(error.message);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };

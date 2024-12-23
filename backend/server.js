@@ -3,10 +3,10 @@ import dotenv from "dotenv";
 import authRoute from "./routes/auth.routes.js";
 import { mongoConnection } from "./config/dbConnection.js";
 
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-dotenv.config();
 
 // middleware
 app.use(express.json());
