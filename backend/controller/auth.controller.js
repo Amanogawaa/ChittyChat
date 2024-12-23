@@ -6,9 +6,8 @@ export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-    const validPassword = bcrypt.compare(password, user.password || "");
 
-    if (!user || !validPassword) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
@@ -54,10 +53,9 @@ export const register = async (req, res) => {
       await newUser.save();
 
       res.status(201).json({
-        _id: newUser._id,
+        id: newUser._id,
         fullname: newUser.fullname,
         gender: newUser.gender,
-        password: newUser.password,
         image: newUser.image,
       });
     }
@@ -69,7 +67,12 @@ export const register = async (req, res) => {
 
 export const logout = (req, res) => {
   try {
-    res.cookie("token", "", { maxAge: 0 });
+    res.cookie("token", "", {
+      maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "strict",
+    });
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.log(error.message);
