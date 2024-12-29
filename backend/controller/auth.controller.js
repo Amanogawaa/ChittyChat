@@ -13,9 +13,12 @@ export const login = async (req, res) => {
         .json({ success: false, error: "Invalid credentials" });
     }
 
-    generateToken(user._id, res);
+    const token = generateToken(user._id, res);
+    console.log(token);
 
-    res.status(200).json({ success: true, message: "Login successful" });
+    res
+      .status(200)
+      .json({ success: true, data: token, message: "Login successful" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: "Internal server error" });
@@ -61,6 +64,7 @@ export const register = async (req, res) => {
     res.status(201).json({
       success: true,
       id: newUser._id,
+      username: newUser.username,
       fullname: newUser.fullname,
       gender: newUser.gender,
       image: newUser.image,

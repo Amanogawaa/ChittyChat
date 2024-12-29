@@ -11,6 +11,8 @@ const generateToken = (id, res) => {
     maxAge: 15 * 24 * 60 * 60 * 1000,
     secure: process.env.NODE_ENV === "production" ? true : false,
   });
+
+  return token;
 };
 
 export default generateToken;

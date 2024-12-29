@@ -48,14 +48,12 @@ const useSignup = () => {
         confirmPassword,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Registration failed");
-        return { success: false, error: data.error };
+      if (!response) {
+        setError(response.error || "Registration failed");
+        return { success: false, error: response.error };
       }
 
-      return { success: true, data };
+      return { success: true, data: response };
     } catch (error) {
       const errorMessage =
         error instanceof Error

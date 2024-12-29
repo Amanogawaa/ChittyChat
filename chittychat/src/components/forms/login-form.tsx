@@ -3,37 +3,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import placeholder from "@/assets/bg.png";
-import useLogin from "@/hooks/useLogin";
 import { useState } from "react";
+import { useAuth } from "@/context/authContext";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { error, loading, login } = useLogin();
+  const { login, loading } = useAuth();
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await login(inputs);
-    if (result.success) {
-      console.log("Login successful!");
+    const result = await login(inputs.username, inputs.password);
+    if (result) {
+      navigate("/home");
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden">
+    <div className={cn("flex flex-col gap-6 ", className)} {...props}>
+      <Card className="overflow-hidden min-h-[400px]  flex justify-center items-center">
         <CardContent
-          className="grid p-0 md:grid-cols-2"
+          className="p-0 h-full flex justify-center items-center w-full"
           onSubmit={handleSubmit}
         >
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8 w-full">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -42,7 +43,7 @@ export function LoginForm({
                 </p>
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid gap-2 w-full">
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
@@ -57,12 +58,6 @@ export function LoginForm({
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
                 </div>
                 <Input
                   id="password"
@@ -74,14 +69,9 @@ export function LoginForm({
                   }
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
               </Button>
-              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
 
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
@@ -91,13 +81,6 @@ export function LoginForm({
               </div>
             </div>
           </form>
-          <div className="relative hidden bg-muted md:block">
-            <img
-              src={placeholder}
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
     </div>

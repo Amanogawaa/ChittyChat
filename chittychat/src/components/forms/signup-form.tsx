@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import placeholder from "@/assets/bg.png";
 import { useState } from "react";
 import Gender from "./gender-box";
 import useSignup from "@/hooks/useSignup";
+import { toast } from "sonner";
 
 export function SignupForm({
   className,
@@ -21,12 +22,16 @@ export function SignupForm({
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await signup(inputs);
-    if (result.success) {
+    console.log(result);
+    if (result) {
       console.log("Signup successful!");
+      toast.success("Signup successful!");
+      navigate("/login");
     }
   };
   const handleCheck = (gender: string) => {
@@ -35,14 +40,14 @@ export function SignupForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
+      <Card className="overflow-hidden min-h-[400px]  ">
+        <CardContent className="p-0 flex justify-center items-center w-full">
+          <form className="p-6 md:p-8 w-full" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-3">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <h1 className="text-2xl font-bold">Welcome Pips</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your Chitty Chat account
+                  Create your Chitty Chat account
                 </p>
               </div>
               <div className="grid gap-2">
@@ -115,13 +120,6 @@ export function SignupForm({
               </div>
             </div>
           </form>
-          <div className="relative hidden bg-muted md:block">
-            <img
-              src={placeholder}
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
     </div>

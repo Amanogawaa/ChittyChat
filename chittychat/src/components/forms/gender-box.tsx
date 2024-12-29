@@ -1,3 +1,4 @@
+import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 
 type GenderProps = {
@@ -7,36 +8,34 @@ type GenderProps = {
 
 const Gender = ({ onCheckbox, selectedGender }: GenderProps) => {
   return (
-    <div className="flex">
+    <div className="flex gap-2">
       <div className="form-control">
         <Label
-          className={`gap-2 cursor-pointer ${
+          className={`gap-1 cursor-pointer flex items-center${
             selectedGender === "male" ? "selected" : ""
           } `}
         >
           <span className="label-text">Male</span>
-          <input
-            type="checkbox"
+          <Checkbox
             className="checkbox border-slate-900"
             checked={selectedGender === "male"}
-            onChange={() => onCheckbox("male")}
+            onCheckedChange={() => onCheckbox("male")}
           />
         </Label>
       </div>
       <div className="form-control">
-        <label
-          className={`label gap-2 cursor-pointer ${
+        <Label
+          className={` gap-1 cursor-pointer flex items-center${
             selectedGender === "female" ? "selected" : ""
           } `}
         >
           <span className="label-text">Female</span>
-          <input
-            type="checkbox"
+          <Checkbox
+            onCheckedChange={() => onCheckbox("female")}
             className="checkbox border-slate-900"
             checked={selectedGender === "female"}
-            onChange={() => onCheckbox("female")}
           />
-        </label>
+        </Label>
       </div>
     </div>
   );
