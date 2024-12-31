@@ -6,6 +6,8 @@ import { Route, Routes } from "react-router-dom";
 import Signup from "./pages/signup";
 import Home from "./pages/home";
 import { Toaster } from "sonner";
+import ProtectRoutes from "./utils/protectRoutes";
+import Layout from "./components/layout";
 
 function App() {
   return (
@@ -14,7 +16,11 @@ function App() {
         <Route index path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
-        <Route path="home" element={<Home />} />
+        <Route element={<ProtectRoutes />}>
+          <Route path="/" element={<Layout />}>
+            <Route path="home" element={<Home />} />
+          </Route>
+        </Route>
       </Routes>
       <Toaster />
     </>

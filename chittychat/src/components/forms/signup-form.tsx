@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import placeholder from "@/assets/bg.png";
 import { useState } from "react";
 import Gender from "./gender-box";
-import useSignup from "@/hooks/useSignup";
+import useSignup from "@/hooks/use-signup";
 import { toast } from "sonner";
 
 export function SignupForm({
