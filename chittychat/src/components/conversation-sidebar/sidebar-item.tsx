@@ -18,8 +18,6 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ conversation }) => {
 
   const isSelected = selectedConversation?._id === conversation._id;
 
-  console.log("selectedConversation", selectedConversation);
-
   return (
     <SidebarMenuItem
       key={conversation._id}
