@@ -1,4 +1,4 @@
-import app from "./api";
+import { app } from "./api/app";
 
 Bun.serve({
   port: 3000,
